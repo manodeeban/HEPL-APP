@@ -13,7 +13,7 @@ const SignInScreen = ({signIN}) => {
     <View style={styles.container}>
       <Image
         style={{width: 200, height: 200, resizeMode: 'contain'}}
-        source={require('../assets/LOGO-HEPL.png')}
+        source={require('../assets/LOGO-HEPL.webp')}
       />
 
       <TouchableOpacity style={styles.button} onPress={signIN}>
