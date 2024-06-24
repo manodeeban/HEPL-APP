@@ -9,18 +9,17 @@ import {
   Image,
   Button,
 } from 'react-native';
-import Pdf from 'react-native-pdf';
 import RNFetchBlob from 'react-native-blob-util';
 import {pdfUrlToBase64} from '../utils/PdfHelper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
+import {useNavigation} from '@react-navigation/native';
 
 const BlobView = ({userInfo, setLoggedIn}) => {
   const [pdfurl, setPdfUrl] = useState('');
   const [base64Data, setBase64Data] = useState('');
-  const [viewPdf, setViewPdf] = useState(false);
-  const [localPdf, setLocalPdf] = useState('');
+  const navigation = useNavigation();
 
   if (pdfurl) {
     pdfUrlToBase64(pdfurl)
@@ -43,8 +42,7 @@ const BlobView = ({userInfo, setLoggedIn}) => {
       const pdfBlob = RNFetchBlob.base64.decode(base64Data);
       const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/temp.pdf`;
       await RNFetchBlob.fs.writeFile(filePath, base64Data, 'base64');
-      setLocalPdf(filePath);
-      setViewPdf(true);
+      navigation.navigate('PdfView', {localPdf: filePath});
       setPdfUrl('');
     } catch (error) {
       console.error(error);
@@ -54,10 +52,8 @@ const BlobView = ({userInfo, setLoggedIn}) => {
 
   const handleReset = () => {
     setPdfUrl('');
-    setLocalPdf('');
-    setViewPdf(false);
   };
-  
+
   const signOut = async () => {
     try {
       await GoogleSignin.revokeAccess();
@@ -97,25 +93,6 @@ const BlobView = ({userInfo, setLoggedIn}) => {
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
       </View>
-
-      {viewPdf && localPdf ? (
-        <Pdf
-          source={{uri: `file://${localPdf}`}}
-          style={styles.pdf}
-          onLoadComplete={(numberOfPages, filePath) => {
-            console.log(`Number of pages: ${numberOfPages}`);
-          }}
-          onPageChanged={(page, numberOfPages) => {
-            console.log(`Current page: ${page}`);
-          }}
-          onError={error => {
-            console.log(error);
-          }}
-          onPressLink={uri => {
-            console.log(`Link pressed: ${uri}`);
-          }}
-        />
-      ) : null}
     </View>
   );
 };
@@ -153,10 +130,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  pdf: {
-    flex: 1,
-    marginTop: 20,
-  },
   usercard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -166,13 +139,13 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderColor: '#dddddd',
     borderRadius: 5,
-    padding: 10,
+    padding: 5,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
-    width: 350,
+    width: 320,
   },
   profileImage: {
     width: 50,

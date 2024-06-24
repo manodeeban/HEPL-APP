@@ -4,7 +4,8 @@ import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SignInScreen from './screens/SignInScreen';
-import BlobView from './screens/BlobView';
+import BlobView from './components/BlobView';
+import HomeScreen from './screens/HomeScreen';
 
 const App = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -12,8 +13,7 @@ const App = () => {
   const timerRef = useRef(null);
 
   GoogleSignin.configure({
-    webClientId:
-      '1043067605789-dohgdcgjcf2ltn4d1oru2sucrh0n34nk.apps.googleusercontent.com',
+    webClientId: process.env.WEBCLIENT_ID,
   });
 
   const signIN = async () => {
@@ -115,7 +115,7 @@ const App = () => {
   return (
     <View style={styles.container}>
       {loggedIn ? (
-        <BlobView userInfo={userInfo} setLoggedIn={setLoggedIn} />
+        <HomeScreen userInfo={userInfo} setLoggedIn={setLoggedIn} />
       ) : (
         <SignInScreen signIN={signIN} />
       )}
