@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "1043067605789",
+    "project_id": "hepl-task",
+    "storage_bucket": "hepl-task.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043067605789:android:1d4db4f8c2c33493bac7f4",
+        "android_client_info": {
+          "package_name": "com.hepl"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043067605789-sce5bki8oe7viee0ffpush2djr7jel47.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hepl",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "1043067605789-dohgdcgjcf2ltn4d1oru2sucrh0n34nk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARui9n3PO9gkHnVDbVEdgA0nwNCvgU_NU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043067605789-dohgdcgjcf2ltn4d1oru2sucrh0n34nk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1043067605789-0koj3pm7u73cibvsk663p1l96r8jjdi8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.manodeeban.HEPLtask"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
