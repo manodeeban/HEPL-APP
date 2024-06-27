@@ -1,3 +1,4 @@
+import LottieView from 'lottie-react-native';
 import React from 'react';
 import {
   StyleSheet,
@@ -14,6 +15,11 @@ const SignInScreen = ({signIN}) => {
       <Image
         style={{width: 200, height: 200, resizeMode: 'contain'}}
         source={require('../assets/LOGO-HEPL.webp')}
+      />
+      <LottieView
+        source={require('../assets/Animation - 1719387193725.json')}
+        autoPlay
+        style={styles.animation}
       />
 
       <TouchableOpacity style={styles.button} onPress={signIN}>
@@ -58,5 +64,9 @@ const styles = StyleSheet.create({
     shadowRadius: 1.41,
     elevation: 2,
     width: 350,
+  },
+  animation: {
+    width: 400,
+    height: 300,
   },
 });

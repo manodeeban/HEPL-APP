@@ -1,16 +1,22 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {AppState, StyleSheet, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import { StyleSheet, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SignInScreen from './screens/SignInScreen';
-import BlobView from './components/BlobView';
 import HomeScreen from './screens/HomeScreen';
+import UserInactivity from 'react-native-user-inactivity';
 
 const App = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
-  const timerRef = useRef(null);
+  const [isActive, setIsActive] = useState(true);
+
+  useEffect(() => {
+    if (!isActive) {
+      handleAutoSignOut();
+    }
+  }, [isActive]);
 
   GoogleSignin.configure({
     webClientId: process.env.WEBCLIENT_ID,
@@ -59,47 +65,6 @@ const App = () => {
 
     return () => unsub();
   }, []);
-  useEffect(() => {
-    getLocalUser();
-
-    // Start listening to app state changes to reset timer on app foreground
-    AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    // Start the timeout when loggedIn state changes
-    if (loggedIn) {
-      startTimer();
-    } else {
-      clearTimer();
-    }
-  }, [loggedIn]);
-
-  const handleAppStateChange = nextAppState => {
-    if (nextAppState === 'active' && loggedIn) {
-      resetTimer();
-    }
-  };
-
-  const startTimer = () => {
-    timerRef.current = setTimeout(handleAutoSignOut, 60000); // 1 minute timeout
-  };
-
-  const resetTimer = () => {
-    clearTimer();
-    startTimer();
-  };
-
-  const clearTimer = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-  };
 
   const handleAutoSignOut = async () => {
     try {
@@ -114,11 +79,18 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      {loggedIn ? (
-        <HomeScreen userInfo={userInfo} setLoggedIn={setLoggedIn} />
-      ) : (
-        <SignInScreen signIN={signIN} />
-      )}
+      <UserInactivity
+        timeForInactivity={60000}
+        onAction={isActive => {
+          setIsActive(isActive);
+        }}
+        style={{flex: 1}}>
+        {loggedIn ? (
+          <HomeScreen userInfo={userInfo} setLoggedIn={setLoggedIn} />
+        ) : (
+          <SignInScreen signIN={signIN} />
+        )}
+      </UserInactivity>
     </View>
   );
 };

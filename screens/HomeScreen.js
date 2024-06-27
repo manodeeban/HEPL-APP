@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -11,7 +11,7 @@ const HomeScreen = ({userInfo, setLoggedIn}) => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="BlobView">
-        <Stack.Screen name="BlobView">
+        <Stack.Screen name="BlobView" options={{headerShown: false}}>
           {props => (
             <BlobView
               {...props}
