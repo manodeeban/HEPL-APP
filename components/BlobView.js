@@ -20,44 +20,37 @@ import {Icon} from '@rneui/base';
 
 const BlobView = ({userInfo, setLoggedIn}) => {
   const [pdfurl, setPdfUrl] = useState('');
-  const [base64Data, setBase64Data] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
   const animationRef = useRef(null);
   const navigation = useNavigation();
 
-  if (pdfurl) {
-    pdfUrlToBase64(pdfurl)
-      .then(base64 => {
-        setBase64Data(String(base64));
-      })
-      .catch(error => {
-        console.error('Error converting PDF to Base64:', error);
-      });
-  }
-
   const handleViewPdf = async () => {
     if (!pdfurl) {
-      Alert.alert('Error', 'Please enter PDF Url');
+      Alert.alert('Warning', 'Please enter PDF URL');
       return;
-    }
-
-    try {
-      const blob = await RNFetchBlob.polyfill.Blob.build(base64Data, {
-        type: 'application/pdf' + ';BASE64',
-      });
-      const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/temp.pdf`;
-      await RNFetchBlob.fs.cp(blob._ref, filePath);
-      setAnimationSpeed(30.0);
-      animationRef.current.play();
-      setTimeout(() => {
-        setAnimationSpeed(1.0);
-        navigation.navigate('PdfView', {localPdf: filePath});
-        setPdfUrl('');
-      }, 1000);
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'Failed to load PDF');
+    } else {
+      await pdfUrlToBase64(pdfurl)
+        .then(async base64 => {
+          const data = String(base64);
+          const blob = await RNFetchBlob.polyfill.Blob.build(data, {
+            type: 'application/pdf' + ';BASE64',
+          });
+          const filePath = `${RNFetchBlob.fs.dirs.DocumentDir}/temp.pdf`;
+          await RNFetchBlob.fs.cp(blob._ref, filePath);
+          setAnimationSpeed(30.0);
+          animationRef.current.play();
+          setTimeout(() => {
+            setAnimationSpeed(1.0);
+            navigation.navigate('PdfView', {localPdf: filePath});
+            setPdfUrl('');
+          }, 1000);
+        })
+        .catch(error => {
+          if (error) {
+            Alert.alert('Please Enter a Valid Url');
+          }
+        });
     }
   };
 
@@ -133,16 +126,16 @@ const BlobView = ({userInfo, setLoggedIn}) => {
             <Text style={styles.modalMessage}>
               Are you sure you want to sign out?
             </Text>
-            <View style={styles.buttonContainerlg}>
+            <View style={styles.buttonContainer}>
               <TouchableOpacity
-                style={styles.buttonlg}
+                style={[styles.button, {backgroundColor: '#ccc'}]}
                 onPress={() => setModalVisible(false)}>
-                <Text style={styles.buttonTextlg}>Cancel</Text>
+                <Text style={styles.buttonText}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.button, styles.signOutButton]}
+                style={[styles.button, {backgroundColor: 'red'}]}
                 onPress={signOut}>
-                <Text style={styles.buttonTextlg}>OK</Text>
+                <Text style={styles.buttonText}>OK</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -188,7 +181,7 @@ const styles = StyleSheet.create({
   usercard: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     backgroundColor: '#ffffff',
     borderWidth: 1,
     borderColor: '#dddddd',
@@ -199,6 +192,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 1.41,
     elevation: 2,
+    position: 'relative',
+    zIndex: 1,
   },
   profileImage: {
     width: 50,
@@ -239,31 +234,13 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: 'black',
   },
-  buttonContainerlg: {
-    flexDirection: 'row',
-  },
-  buttonlg: {
-    flex: 1,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 5,
-    backgroundColor: '#ccc',
-    marginHorizontal: 5,
-  },
-  signOutButton: {
-    backgroundColor: 'red',
-  },
-  buttonTextlg: {
-    color: 'white',
-    fontWeight: 'bold',
-  },
   logout: {
     width: 50,
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 25,
+    backgroundColor: '#f6f8fa',
   },
 });
 

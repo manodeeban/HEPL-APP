@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { StyleSheet, View} from 'react-native';
+import {KeyboardAvoidingView, StyleSheet, View} from 'react-native';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -79,18 +79,23 @@ const App = () => {
 
   return (
     <View style={styles.container}>
-      <UserInactivity
-        timeForInactivity={60000}
-        onAction={isActive => {
-          setIsActive(isActive);
-        }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS == 'ios' ? -64 : 0}
         style={{flex: 1}}>
-        {loggedIn ? (
-          <HomeScreen userInfo={userInfo} setLoggedIn={setLoggedIn} />
-        ) : (
-          <SignInScreen signIN={signIN} />
-        )}
-      </UserInactivity>
+        <UserInactivity
+          timeForInactivity={60000}
+          onAction={isActive => {
+            setIsActive(isActive);
+          }}
+          style={{flex: 1}}>
+          {loggedIn ? (
+            <HomeScreen userInfo={userInfo} setLoggedIn={setLoggedIn} />
+          ) : (
+            <SignInScreen signIN={signIN} />
+          )}
+        </UserInactivity>
+      </KeyboardAvoidingView>
     </View>
   );
 };
